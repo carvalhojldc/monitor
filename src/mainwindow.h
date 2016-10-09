@@ -52,6 +52,8 @@ private:
 
     float timescale;
 
+    int teste = 0;
+
     QStringList listColumProcess = { "PID" , "Process Name" , "User" , "Nice", "%CPU", "Memory"};
     enum columProcess {PID, PROCESS_NAME, USER, NICE, PCPU, MEMORY};
 };

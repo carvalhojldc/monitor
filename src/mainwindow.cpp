@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Thread e Timer
     timerGraph = new QTimer(0);
     threadGraph = new QThread(this);
-    timerGraph->start(100);
+    timerGraph->start(500);
     threadGraph->start();
     timerGraph->moveToThread(threadGraph);
 
@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     UI_ConfigGraphMemory();
     UI_ConfigGraphCPU();
 
-    this->show();
+   // this->show();
 }
 
 MainWindow::~MainWindow()
@@ -147,12 +147,21 @@ void MainWindow::graphCPU() {
 
     QString strCPU;
 
+    cpu->updateCPU();
+
+    if(teste == 6) {
     strCPU.clear();
     for(int i=0; i<numCores; i++) {
-        ui->graphCPU->graph(i)->addData(timescale,12+i+(5*i));
-        strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(2+i+(5*i)) + "% ";
+        //ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
+        strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(cpu->getPerctCPU(i)) + "% ";
     }
     ui->labelCPU->setText(strCPU);
+    teste = 0;
+    }
+    teste += 1;
+
+    for(int i=0; i<numCores; i++)
+        ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
 
     ui->graphCPU->xAxis->setRange(timescale, 60, Qt::AlignRight);
     ui->graphCPU->replot();
