@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    cpu.cpp
+    cpu.cpp \
+    meminfo.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
-    cpu.h
+    cpu.h \
+    meminfo.h \
+    qcustomplot.h
 
 FORMS    += mainwindow.ui

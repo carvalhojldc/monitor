@@ -3,26 +3,49 @@
 
 #include <QMainWindow>
 
-#include "cpu.h"
+#include "qcustomplot.h"
 
 #include <QDebug>
 
+#include "meminfo.h"
+#include "cpu.h"
+
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    CPU *cpu;
+
+private slots:
+    void UI_ConfigGraphMemory();
+    void UI_ConfigGraphCPU();
+    void graphMemory();
+    void graphCPU();
+    void graphics();
+
 
 private:
     Ui::MainWindow *ui;
+
+    QTimer *timerGraph;
+    QThread *threadGraph;
+
+    MemInfo *memInfo;
+    CPU *cpu;
+
+    int numCores;
+
+    double memTotal;
+    double memSwapTotal;
+
+    float timescale;
 };
 
 #endif // MAINWINDOW_H

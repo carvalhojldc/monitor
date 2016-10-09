@@ -3,6 +3,9 @@
 
 #include <unistd.h>
 
+#include <QDebug>
+
+
 class CPU {
 private:
     int numberCore;
@@ -10,7 +13,7 @@ private:
 public:
     CPU();
 
-    int getNumberCore();
+    int getNumberCore() const;
 };
 
 #endif // CPU_H
