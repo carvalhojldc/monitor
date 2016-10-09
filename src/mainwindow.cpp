@@ -6,41 +6,58 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
 
     memInfo = new MemInfo();
     cpu = new CPU();
 
+    // Thread e Timer
     timerGraph = new QTimer(0);
     threadGraph = new QThread(this);
     timerGraph->start(100);
     threadGraph->start();
     timerGraph->moveToThread(threadGraph);
-    connect(timerGraph, SIGNAL(timeout()), this, SLOT(graphics()));
 
+    timerProcesses = new QTimer(0);
+    threadProcesses = new QThread(this);
+    timerProcesses->start(1000);
+    threadProcesses->start();
+    timerProcesses->moveToThread(threadProcesses);
+
+    //
+    connect(timerGraph, SIGNAL(timeout()), this, SLOT(graphics()));
+    connect(timerProcesses, SIGNAL(timeout()), this, SLOT(processes()));
+
+
+    //
     numCores = cpu->getNumberCore();
     memInfo->memInfoUpdate();
-
     memTotal = memInfo->getMemTotal();
     memSwapTotal = memInfo->getSwapTotal();
-
     timescale = 0;
 
+
+    // UI
+    UI_ConfigProcesses();
     UI_ConfigGraphMemory();
     UI_ConfigGraphCPU();
 
-
-    ui->tableWidget->setRowCount(10);
-    ui->tableWidget->setColumnCount(6);
-    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "PID" << "Process Name" << "User" << "Nice" << "%CPU" << "Memory");
+    this->show();
 }
 
 MainWindow::~MainWindow()
 {
     threadGraph->terminate();
+    threadProcesses->terminate();
     delete ui;
+}
+
+void MainWindow::UI_ConfigProcesses() {
+    ui->tableWidget->setColumnCount(6);
+
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setHorizontalHeaderLabels(listColumProcess);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 void MainWindow::UI_ConfigGraphMemory() {
@@ -66,10 +83,10 @@ void MainWindow::UI_ConfigGraphMemory() {
     ui->graphMemory->graph(1)->setAntialiasedFill(false);
     ui->graphMemory->graph(1)->setName("Swap");
 
-    ui->graphMemory->xAxis->setLabel("Time (s)");
+    ui->graphMemory->xAxis->setLabel("Seconds");
+    ui->graphMemory->yAxis->setLabel("% Memory");
     ui->graphMemory->yAxis->setRange(0,100);
     ui->graphMemory->yAxis->setNumberPrecision(5);
-    ui->graphMemory->yAxis->setLabel("% Memory");
     ui->graphMemory->xAxis->setSubTickCount(10);
 
     ui->graphMemory->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables );
@@ -90,12 +107,12 @@ void MainWindow::UI_ConfigGraphCPU() {
 
     for(int i=0; i<numCores; i++) {
         ui->graphCPU->addGraph();
-        ui->graphCPU->graph(i)->setName("core" + QString::number(i));
+        ui->graphCPU->graph(i)->setName("CPU" + QString::number(i));
         ui->graphCPU->graph(i)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
         ui->graphCPU->graph(i)->setAntialiasedFill(false);
     }
 
-    ui->graphCPU->xAxis->setLabel("Time (s)");
+    ui->graphCPU->xAxis->setLabel("Seconds");
     ui->graphCPU->yAxis->setLabel("% CPU");
 
     //ui->graphCPU->xAxis->setSubTickCount(10);
@@ -128,10 +145,14 @@ void MainWindow::graphMemory() {
 
 void MainWindow::graphCPU() {
 
+    QString strCPU;
+
+    strCPU.clear();
     for(int i=0; i<numCores; i++) {
         ui->graphCPU->graph(i)->addData(timescale,12+i+(5*i));
+        strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(2+i+(5*i)) + "% ";
     }
-
+    ui->labelCPU->setText(strCPU);
 
     ui->graphCPU->xAxis->setRange(timescale, 60, Qt::AlignRight);
     ui->graphCPU->replot();
@@ -142,4 +163,22 @@ void MainWindow::graphics() {
     graphCPU();
 
     timescale += 0.1;
+}
+
+void MainWindow::processes() {
+
+    int i = 0;
+    if(ui->tableWidget->rowCount() <1)
+        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+
+    ui->tableWidget->setItem(i,PID,new QTableWidgetItem("991"));
+    ui->tableWidget->setItem(i,PROCESS_NAME,new QTableWidgetItem("firefox"));
+    ui->tableWidget->setItem(i,PROCESS_NAME,new QTableWidgetItem("firefox"));
+    ui->tableWidget->setItem(i,USER,new QTableWidgetItem("gg"));
+    ui->tableWidget->setItem(i,NICE,new QTableWidgetItem("0"));
+    ui->tableWidget->setItem(i,PCPU,new QTableWidgetItem("3"));
+    ui->tableWidget->setItem(i,MEMORY,new QTableWidgetItem("23.1"));
+
+
+
 }

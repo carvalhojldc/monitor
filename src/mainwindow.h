@@ -24,18 +24,23 @@ public:
 
 
 private slots:
+    void UI_ConfigProcesses();
     void UI_ConfigGraphMemory();
     void UI_ConfigGraphCPU();
+
     void graphMemory();
     void graphCPU();
     void graphics();
-
+    void processes();
 
 private:
     Ui::MainWindow *ui;
 
     QTimer *timerGraph;
     QThread *threadGraph;
+
+    QTimer *timerProcesses;
+    QThread *threadProcesses;
 
     MemInfo *memInfo;
     CPU *cpu;
@@ -46,6 +51,9 @@ private:
     double memSwapTotal;
 
     float timescale;
+
+    QStringList listColumProcess = { "PID" , "Process Name" , "User" , "Nice", "%CPU", "Memory"};
+    enum columProcess {PID, PROCESS_NAME, USER, NICE, PCPU, MEMORY};
 };
 
 #endif // MAINWINDOW_H
