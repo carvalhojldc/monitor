@@ -41,7 +41,7 @@ void MemInfo::memInfoSearch(void) {
 }
 
 double MemInfo::truncate(double number) {
-    return (int)number +(((int)((number - (int)number)*100.))/100.);
+    return (int)number +(((int)((number - (int)number)*10.))/10.);
 }
 
 double MemInfo::KbTOGiB(unsigned long number) {

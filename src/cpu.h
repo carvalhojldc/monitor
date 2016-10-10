@@ -36,7 +36,7 @@ private:
     long int *cpuDataTNew,
             *cpuDataTOld,
             *cpuDataINew,
-        *cpuDataIOld;
+            *cpuDataIOld;
     float *percCPU;
 
     void readCPUFile(long int *total_, long int *idle_);

@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Thread e Timer
     timerGraph = new QTimer(0);
     threadGraph = new QThread(this);
-    timerGraph->start(500);
+    timerGraph->start(100);
     threadGraph->start();
     timerGraph->moveToThread(threadGraph);
 
@@ -36,7 +36,12 @@ MainWindow::MainWindow(QWidget *parent) :
     memSwapTotal = memInfo->getSwapTotal();
     timescale = 0;
 
-
+    QLabel *cell[numCores+1];
+    for(int i=0;i<numCores+1;i++) {
+       // cell[i] = new QLabel();
+        //ui->gridCPU->addWidget(cell[i],0,i,Qt::AlignCenter);
+        //ui.cell[i]->setText("aa");
+    }
     // UI
     UI_ConfigProcesses();
     UI_ConfigGraphMemory();
@@ -86,8 +91,8 @@ void MainWindow::UI_ConfigGraphMemory() {
     ui->graphMemory->xAxis->setLabel("Seconds");
     ui->graphMemory->yAxis->setLabel("% Memory");
     ui->graphMemory->yAxis->setRange(0,100);
-    ui->graphMemory->yAxis->setNumberPrecision(5);
-    ui->graphMemory->xAxis->setSubTickCount(10);
+    //ui->graphMemory->yAxis->setNumberPrecision(5);
+    //ui->graphMemory->xAxis->setSubTickCount(10);
 
     ui->graphMemory->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables );
     ui->graphMemory->axisRect(0)->setRangeDrag(Qt::Vertical);
@@ -105,9 +110,12 @@ void MainWindow::UI_ConfigGraphCPU() {
     subLayout->addElement(2, 0, new QCPLayoutElement);
     ui->graphCPU->plotLayout()->setColumnStretchFactor(1, 0.001);
 
-    for(int i=0; i<numCores; i++) {
+    for(int i=0; i<=numCores; i++) {
         ui->graphCPU->addGraph();
-        ui->graphCPU->graph(i)->setName("CPU" + QString::number(i));
+        if(i == 0)
+            ui->graphCPU->graph(i)->setName("Average");
+        else
+            ui->graphCPU->graph(i)->setName("CPU" + QString::number(i));
         ui->graphCPU->graph(i)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
         ui->graphCPU->graph(i)->setAntialiasedFill(false);
     }
@@ -117,6 +125,7 @@ void MainWindow::UI_ConfigGraphCPU() {
 
     //ui->graphCPU->xAxis->setSubTickCount(10);
     ui->graphCPU->yAxis->setRange(0,100);
+    ui->graphCPU->yAxis->setTickLengthIn(5);
     //ui->graphCPU->yAxis->setNumberPrecision(5);
 
     ui->graphCPU->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables );
@@ -149,19 +158,24 @@ void MainWindow::graphCPU() {
 
     cpu->updateCPU();
 
-    if(teste == 6) {
-    strCPU.clear();
-    for(int i=0; i<numCores; i++) {
-        //ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
-        strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(cpu->getPerctCPU(i)) + "% ";
-    }
-    ui->labelCPU->setText(strCPU);
-    teste = 0;
+    if(teste == 5) {
+        strCPU.clear();
+        for(int i=0; i<=numCores; i++) {
+            if(i == 0)
+            strCPU  =  "  Average " + QString::number(cpu->getPerctCPU(i)) + "% ";
+            else
+            strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(cpu->getPerctCPU(i)) + "% ";
+
+            ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
+        }
+
+        ui->labelCPU->setText(strCPU);
+        teste = 0;
     }
     teste += 1;
 
-    for(int i=0; i<numCores; i++)
-        ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
+    for(int i=0; i<=numCores; i++)
+
 
     ui->graphCPU->xAxis->setRange(timescale, 60, Qt::AlignRight);
     ui->graphCPU->replot();

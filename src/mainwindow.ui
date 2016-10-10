@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>550</height>
+    <width>746</width>
+    <height>736</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>670</width>
-    <height>550</height>
+    <width>1000</width>
+    <height>1000</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,8 +31,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>671</width>
-      <height>571</height>
+      <width>751</width>
+      <height>591</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -51,7 +51,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="movable">
      <bool>true</bool>
@@ -66,10 +66,10 @@
      <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>651</width>
-        <height>441</height>
+        <x>0</x>
+        <y>0</y>
+        <width>741</width>
+        <height>541</height>
        </rect>
       </property>
       <property name="showGrid">
@@ -89,7 +89,7 @@
        <rect>
         <x>10</x>
         <y>270</y>
-        <width>641</width>
+        <width>721</width>
         <height>241</height>
        </rect>
       </property>
@@ -107,7 +107,7 @@
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>621</width>
+         <width>701</width>
          <height>161</height>
         </rect>
        </property>
@@ -130,7 +130,7 @@
         <rect>
          <x>10</x>
          <y>200</y>
-         <width>621</width>
+         <width>701</width>
          <height>31</height>
         </rect>
        </property>
@@ -177,7 +177,7 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>641</width>
+        <width>721</width>
         <height>241</height>
        </rect>
       </property>
@@ -195,7 +195,7 @@
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>621</width>
+         <width>701</width>
          <height>161</height>
         </rect>
        </property>
@@ -218,7 +218,7 @@
         <rect>
          <x>10</x>
          <y>200</y>
-         <width>621</width>
+         <width>701</width>
          <height>31</height>
         </rect>
        </property>
