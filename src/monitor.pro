@@ -21,6 +21,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     cpu.h \
     meminfo.h \
-    qcustomplot.h
+    qcustomplot.h \
+    processo.h
 
 FORMS    += mainwindow.ui

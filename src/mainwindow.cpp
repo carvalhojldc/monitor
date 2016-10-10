@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     memInfo = new MemInfo();
     cpu = new CPU();
+    processo = new Processo();
 
     // Thread e Timer
     timerGraph = new QTimer(0);
@@ -28,7 +29,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timerGraph, SIGNAL(timeout()), this, SLOT(graphics()));
     connect(timerProcesses, SIGNAL(timeout()), this, SLOT(processes()));
 
+    connect(ui->pb_kill, SIGNAL(clicked(bool)), this, SLOT(killProcesses()));
+    connect(ui->pb_pause, SIGNAL(clicked(bool)), this, SLOT(pauseProcesses()));
+    connect(ui->pb_continue, SIGNAL(clicked(bool)), this, SLOT(continueProcesses()));
 
+    connect(ui->search, SIGNAL(textChanged(const QString &)), this, SLOT(sort(const QString &)));
+    //connect(ui->pb_search, SIGNAL(clicked(bool)), this, SLOT(sort()));
+
+    connect(ui->tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(previousWeek(int, int)));
     //
     numCores = cpu->getNumberCore();
     memInfo->memInfoUpdate();
@@ -46,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     UI_ConfigProcesses();
     UI_ConfigGraphMemory();
     UI_ConfigGraphCPU();
+
+
 
    // this->show();
 }
@@ -188,20 +198,92 @@ void MainWindow::graphics() {
     timescale += 0.1;
 }
 
+void MainWindow::killProcesses() {
+    if(pidClicked != getpid())
+    kill(pidClicked, SIGKILL);
+}
+
+void MainWindow::pauseProcesses() {
+    if(pidClicked != getpid())
+    kill(pidClicked, SIGSTOP);
+}
+
+void MainWindow::continueProcesses() {
+    if(pidClicked != getpid())
+    kill(pidClicked, SIGCONT);
+}
+
+
+void MainWindow::previousWeek(int row, int col) {
+    pidClicked = ui->tableWidget->item(row,0)->text().toInt();
+}
+
+void MainWindow::sort(const QString &filter)
+{
+// http://stackoverflow.com/questions/6785481/how-to-set-filter-option-in-qtablewidget// http://stackoverflow.com/questions/20585795/how-to-connect-the-signal-valuechanged-from-qlineedit-to-a-custom-slot-in-qt
+    for( int i = 0; i < ui->tableWidget->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < 3; ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget->item( i, j );
+            if( item->text().contains(filter) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget->setRowHidden( i, !match );
+    }
+
+}
+
 void MainWindow::processes() {
 
     int i = 0;
-    if(ui->tableWidget->rowCount() <1)
+    int *vec;
+    int qPID;
+
+
+
+
+
+    qPID = processo->Q_PIDS();
+    vec = processo->leitura_PID();
+
+
+
+    if(qPID<qpidantigo)
+    for(int linha = 0; linha<(qpidantigo-qPID); linha++) {
+        ui->tableWidget->removeRow(qpidantigo-linha);
+    }
+    else if(qpidantigo<qPID)
+    for(int linha = 0; linha<(qPID-qpidantigo); linha++) {
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+    }
+    qpidantigo = qPID;
 
-    ui->tableWidget->setItem(i,PID,new QTableWidgetItem("991"));
-    ui->tableWidget->setItem(i,PROCESS_NAME,new QTableWidgetItem("firefox"));
-    ui->tableWidget->setItem(i,PROCESS_NAME,new QTableWidgetItem("firefox"));
-    ui->tableWidget->setItem(i,USER,new QTableWidgetItem("gg"));
-    ui->tableWidget->setItem(i,NICE,new QTableWidgetItem("0"));
-    ui->tableWidget->setItem(i,PCPU,new QTableWidgetItem("3"));
-    ui->tableWidget->setItem(i,MEMORY,new QTableWidgetItem("23.1"));
 
+    for(int ppid = 0; ppid<qPID; ppid++) {
+
+        std::string s;
+        std::stringstream out;
+        out << vec[ppid];
+        s = out.str();
+        processo->leitura_nome_processo(s);
+        //processo->Get_nomeProcesso();
+        QString nameP = QString::fromLocal8Bit(processo->Get_nomeProcesso().c_str());
+
+        ui->tableWidget->setItem(ppid,PID,new QTableWidgetItem(QString::number(vec[ppid])));
+
+        ui->tableWidget->setItem(ppid,PROCESS_NAME,
+                                 new QTableWidgetItem(nameP));
+        ui->tableWidget->setItem(ppid,USER,new QTableWidgetItem("gg"));
+        ui->tableWidget->setItem(ppid,NICE,new QTableWidgetItem("0"));
+        ui->tableWidget->setItem(ppid,PCPU,new QTableWidgetItem("3"));
+        ui->tableWidget->setItem(ppid,MEMORY,new QTableWidgetItem("23.1"));
+
+    }
 
 
 }
