@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>855</width>
-    <height>586</height>
+    <width>706</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -31,7 +31,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>861</width>
+      <width>711</width>
       <height>621</height>
      </rect>
     </property>
@@ -68,21 +68,32 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>851</width>
+        <width>701</width>
         <height>491</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="showGrid">
        <bool>false</bool>
       </property>
+      <property name="columnCount">
+       <number>0</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>160</number>
+      </attribute>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>300</x>
+        <x>130</x>
         <y>500</y>
         <width>521</width>
         <height>31</height>
@@ -147,14 +158,6 @@
        </item>
       </layout>
      </widget>
-     <zorder>tableWidget</zorder>
-     <zorder>pb_kill</zorder>
-     <zorder>pb_pause</zorder>
-     <zorder>pb_continue</zorder>
-     <zorder>search</zorder>
-     <zorder>label</zorder>
-     <zorder>horizontalSpacer</zorder>
-     <zorder></zorder>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -165,7 +168,7 @@
        <rect>
         <x>10</x>
         <y>270</y>
-        <width>831</width>
+        <width>691</width>
         <height>241</height>
        </rect>
       </property>
@@ -183,7 +186,7 @@
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>811</width>
+         <width>671</width>
          <height>161</height>
         </rect>
        </property>
@@ -206,7 +209,7 @@
         <rect>
          <x>10</x>
          <y>200</y>
-         <width>811</width>
+         <width>671</width>
          <height>31</height>
         </rect>
        </property>
@@ -253,7 +256,7 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>831</width>
+        <width>691</width>
         <height>241</height>
        </rect>
       </property>
@@ -271,7 +274,7 @@
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>811</width>
+         <width>671</width>
          <height>161</height>
         </rect>
        </property>
@@ -294,7 +297,7 @@
         <rect>
          <x>10</x>
          <y>200</y>
-         <width>811</width>
+         <width>671</width>
          <height>31</height>
         </rect>
        </property>

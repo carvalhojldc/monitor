@@ -34,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_continue, SIGNAL(clicked(bool)), this, SLOT(continueProcesses()));
 
     connect(ui->search, SIGNAL(textChanged(const QString &)), this, SLOT(sort(const QString &)));
-    //connect(ui->pb_search, SIGNAL(clicked(bool)), this, SLOT(sort()));
 
     connect(ui->tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(previousWeek(int, int)));
+
     //
     numCores = cpu->getNumberCore();
     memInfo->memInfoUpdate();
@@ -44,20 +44,12 @@ MainWindow::MainWindow(QWidget *parent) :
     memSwapTotal = memInfo->getSwapTotal();
     timescale = 0;
 
-    QLabel *cell[numCores+1];
-    for(int i=0;i<numCores+1;i++) {
-       // cell[i] = new QLabel();
-        //ui->gridCPU->addWidget(cell[i],0,i,Qt::AlignCenter);
-        //ui.cell[i]->setText("aa");
-    }
+
     // UI
     UI_ConfigProcesses();
     UI_ConfigGraphMemory();
     UI_ConfigGraphCPU();
 
-
-
-   // this->show();
 }
 
 MainWindow::~MainWindow()
@@ -68,7 +60,18 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::UI_ConfigProcesses() {
-    ui->tableWidget->setColumnCount(6);
+    ui->tableWidget->setColumnCount(NUMB_COL_PROCESS);
+    //ui->tableWidget->columnSpan(    )
+
+    ui->tableWidget->setColumnWidth(PID, 100);
+    ui->tableWidget->setColumnWidth(PROCESS_NAME, 230);
+    ui->tableWidget->setColumnWidth(USER, 100);
+    ui->tableWidget->setColumnWidth(NICE, 100);
+    ui->tableWidget->setColumnWidth(MEMORY, 100);
+
+    //ui->tableWidget->setSortingEnabled(true);
+    //ui->tableWidget->sortByColumn(PID,Qt::AscendingOrder);
+    //ui->tableWidget->sortByColumn(PROCESS_NAME,Qt::AscendingOrder);
 
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setHorizontalHeaderLabels(listColumProcess);
@@ -123,7 +126,7 @@ void MainWindow::UI_ConfigGraphCPU() {
     for(int i=0; i<=numCores; i++) {
         ui->graphCPU->addGraph();
         if(i == 0)
-            ui->graphCPU->graph(i)->setName("Average");
+            ui->graphCPU->graph(i)->setName("CPU");
         else
             ui->graphCPU->graph(i)->setName("CPU" + QString::number(i));
         ui->graphCPU->graph(i)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
@@ -172,7 +175,7 @@ void MainWindow::graphCPU() {
         strCPU.clear();
         for(int i=0; i<=numCores; i++) {
             if(i == 0)
-            strCPU  =  "  Average " + QString::number(cpu->getPerctCPU(i)) + "% ";
+            strCPU  =  "  CPU " + QString::number(cpu->getPerctCPU(i)) + "% ";
             else
             strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(cpu->getPerctCPU(i)) + "% ";
 
@@ -245,12 +248,8 @@ void MainWindow::processes() {
     int qPID;
 
 
-
-
-
     qPID = processo->Q_PIDS();
     vec = processo->leitura_PID();
-
 
 
     if(qPID<qpidantigo)
@@ -271,17 +270,20 @@ void MainWindow::processes() {
         out << vec[ppid];
         s = out.str();
         processo->leitura_nome_processo(s);
+        //processo->leitura_memoria_processo(s);
+        //processo->leitura_prioridade(s);
         //processo->Get_nomeProcesso();
-        QString nameP = QString::fromLocal8Bit(processo->Get_nomeProcesso().c_str());
+        QString nameP = processo->Get_nomeProcesso().c_str();
+        //QString memR = QString::number(processo->Get_memoriaRam());
+        //QString prio = QString::number(processo->Get_prioridade());
 
         ui->tableWidget->setItem(ppid,PID,new QTableWidgetItem(QString::number(vec[ppid])));
 
         ui->tableWidget->setItem(ppid,PROCESS_NAME,
                                  new QTableWidgetItem(nameP));
-        ui->tableWidget->setItem(ppid,USER,new QTableWidgetItem("gg"));
-        ui->tableWidget->setItem(ppid,NICE,new QTableWidgetItem("0"));
-        ui->tableWidget->setItem(ppid,PCPU,new QTableWidgetItem("3"));
-        ui->tableWidget->setItem(ppid,MEMORY,new QTableWidgetItem("23.1"));
+        ui->tableWidget->setItem(ppid,USER,new QTableWidgetItem(".."));
+        ui->tableWidget->setItem(ppid,NICE,new QTableWidgetItem(".."));
+        ui->tableWidget->setItem(ppid,MEMORY,new QTableWidgetItem(".."));
 
     }
 

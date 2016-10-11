@@ -17,6 +17,10 @@
 
 #include <signal.h>
 
+#define NUMB_COL_PROCESS 5
+enum columProcess {PID, PROCESS_NAME, USER, NICE, MEMORY};
+
+
 namespace Ui {
     class MainWindow;
 }
@@ -74,8 +78,7 @@ private:
 
     int pidClicked;
 
-    QStringList listColumProcess = { "PID" , "Process Name" , "User" , "Nice", "%CPU", "Memory"};
-    enum columProcess {PID, PROCESS_NAME, USER, NICE, PCPU, MEMORY};
+    QStringList listColumProcess = { "PID" , "Process Name" , "User" , "Prio", "Memory"};
 };
 
 #endif // MAINWINDOW_H
