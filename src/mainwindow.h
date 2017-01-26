@@ -13,7 +13,7 @@
 
 #include "meminfo.h"
 #include "cpu.h"
-#include "processo.h"
+#include "ProcessData.h"
 
 #include <signal.h>
 
@@ -61,7 +61,9 @@ private:
 
     MemInfo *memInfo;
     CPU *cpu;
-    Processo *processo;
+
+    ProcessData *processData;
+    const Process *process;
 
     int numCores;
 

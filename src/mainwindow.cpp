@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     memInfo = new MemInfo();
     cpu = new CPU();
-    processo = new Processo();
+    processData = new ProcessData();
 
     // Thread e Timer
     timerGraph = new QTimer(0);
