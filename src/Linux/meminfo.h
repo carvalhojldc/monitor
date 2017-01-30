@@ -59,11 +59,9 @@ File /proc/meminfo
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-
-#include <QDebug>
+#include <climits>
 
 #define MEM_INFO_FILE "/proc/meminfo"
-#define MEM_BUFFER 50
 
 class MemInfo {
 private:
@@ -77,15 +75,14 @@ private:
 	unsigned long swapTotal;
 	unsigned long swapFree;
 
-    void memInfoSearch(void);
-    void memRamCalc(void);
-
     double truncate(double number);
-    double KbTOGiB(unsigned long number);
+    int memInfoSearch(void);
 	
 public:
     MemInfo();
 	~MemInfo();
+
+    int memInfoUpdate(void);
 
     unsigned long getMemTotal(void) const;
     unsigned long getMemAvailable(void) const;
@@ -95,22 +92,8 @@ public:
 	unsigned long getSwapFree(void) const;
 	unsigned long getSwapUsed(void) const;
 
-    double getMemUsedPerct(void) ;
-    double getSwapUsedPerct(void) ;
-
-    double getMemTotalGiB(void);
-    double getMemAvailableGiB(void);
-    double getMemUsedGiB(void);
-
-    double getSwapTotalGiB(void);
-    double getSwapFreeGiB(void);
-    double getSwapUsedGiB(void);
-
-
-    void memInfoUpdate(void);
-
-
-
+    double getMemUsedPerct(void);
+    double getSwapUsedPerct(void);
 };
 
 #endif /* MEMINFO_H */

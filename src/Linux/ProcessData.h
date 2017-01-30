@@ -13,6 +13,7 @@
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
+#include <limits.h>
 
 typedef struct {
     char name[_POSIX2_BC_STRING_MAX];
@@ -30,10 +31,7 @@ class ProcessData {
 
 private:
 
-    /*
-     * type for data of process
-     */
-    Process* process;
+    Process process;
 
     unsigned int pageSize;
 
@@ -135,10 +133,10 @@ public:
      *
      * @paran pid PID of process
      *
-     * @return Process* data read
+     * @return Process data read
      *
      */
-    const Process* getStatData(unsigned int pid);
+    const Process getData(unsigned int pid);
 
 };
 

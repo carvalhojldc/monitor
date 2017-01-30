@@ -2,24 +2,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
-#include "qcustomplot.h"
-
 #include <QDebug>
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "meminfo.h"
-#include "cpu.h"
-#include "ProcessData.h"
-
 #include <signal.h>
+#include <list>
+
+#include "qcustomplot.h"
+#include "Linux/meminfo.h"
+#include "Linux/cpu.h"
+#include "Linux/Processes.h"
 
 #define NUMB_COL_PROCESS 5
-enum columProcess {PID, PROCESS_NAME, USER, NICE, MEMORY};
-
+enum columProcess {PROCESS_PID, PROCESS_NAME, PROCESS_USER, PROCESS_NICE, PROCESS_MEMORY};
 
 namespace Ui {
     class MainWindow;
@@ -33,7 +30,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
 private slots:
     void UI_ConfigProcesses();
     void UI_ConfigGraphMemory();
@@ -42,12 +38,11 @@ private slots:
     void graphMemory();
     void graphCPU();
     void graphics();
-    void processes();
+    void processesTable();
 
     void killProcesses();
     void pauseProcesses();
     void continueProcesses();
-    void sort(const QString &);
     void previousWeek(int row, int col);
 
 private:
@@ -59,25 +54,17 @@ private:
     QTimer *timerProcesses;
     QThread *threadProcesses;
 
+    Processes *processes;
     MemInfo *memInfo;
     CPU *cpu;
 
-    ProcessData *processData;
-    const Process *process;
+    std::list<Process> listProcess, listProcess_Old;
 
     int numCores;
-
     double memTotal;
     double memSwapTotal;
 
     float timescale;
-
-    int teste = 0;
-
-    int qpidantigo = 0;
-
-    bool ts = false;
-
     int pidClicked;
 
     QStringList listColumProcess = { "PID" , "Process Name" , "User" , "Prio", "Memory"};

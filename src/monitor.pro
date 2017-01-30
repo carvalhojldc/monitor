@@ -8,20 +8,25 @@ QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = monitor
+TARGET = ssm
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    cpu.cpp \
-    meminfo.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    Linux/cpu.cpp \
+    Linux/meminfo.cpp \
+    Linux/ProcessData.cpp \
+    Linux/Processes.cpp
+    Linux/Processes.cpp
 
 HEADERS  += mainwindow.h \
-    cpu.h \
-    meminfo.h \
     qcustomplot.h \
-    processo.h
+    Linux/cpu.h \
+    Linux/meminfo.h \
+    Linux/Process.h \
+    Linux/ProcessData.h \
+    Linux/Processes.h
 
 FORMS    += mainwindow.ui

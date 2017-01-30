@@ -51,7 +51,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="movable">
      <bool>true</bool>
@@ -114,22 +114,7 @@
         </spacer>
        </item>
        <item row="0" column="2">
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Search:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="search">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <layout class="QGridLayout" name="gridLayout_2"/>
        </item>
        <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout_5">
@@ -275,7 +260,7 @@
          <x>10</x>
          <y>30</y>
          <width>671</width>
-         <height>161</height>
+         <height>201</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -291,34 +276,6 @@
         </size>
        </property>
        <layout class="QGridLayout" name="gridLayout_4"/>
-      </widget>
-      <widget class="QWidget" name="gridLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>200</y>
-         <width>671</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridCPU">
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelCPU">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </widget>
      </widget>
     </widget>

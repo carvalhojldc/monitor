@@ -10,12 +10,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     memInfo = new MemInfo();
     cpu = new CPU();
-    processData = new ProcessData();
+    processes = new Processes();
 
     // Thread e Timer
     timerGraph = new QTimer(0);
     threadGraph = new QThread(this);
-    timerGraph->start(100);
+    timerGraph->start(500);
     threadGraph->start();
     timerGraph->moveToThread(threadGraph);
 
@@ -27,15 +27,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //
     connect(timerGraph, SIGNAL(timeout()), this, SLOT(graphics()));
-    connect(timerProcesses, SIGNAL(timeout()), this, SLOT(processes()));
+    connect(timerProcesses, SIGNAL(timeout()), this, SLOT(processesTable()));
 
     connect(ui->pb_kill, SIGNAL(clicked(bool)), this, SLOT(killProcesses()));
     connect(ui->pb_pause, SIGNAL(clicked(bool)), this, SLOT(pauseProcesses()));
     connect(ui->pb_continue, SIGNAL(clicked(bool)), this, SLOT(continueProcesses()));
 
-    connect(ui->search, SIGNAL(textChanged(const QString &)), this, SLOT(sort(const QString &)));
-
-    connect(ui->tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(previousWeek(int, int)));
+    //connect(ui->tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(previousWeek(int, int)));
 
     //
     numCores = cpu->getNumberCore();
@@ -44,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     memSwapTotal = memInfo->getSwapTotal();
     timescale = 0;
 
-
     // UI
     UI_ConfigProcesses();
     UI_ConfigGraphMemory();
@@ -52,10 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     threadGraph->terminate();
     threadProcesses->terminate();
+
+    delete memInfo;
+    delete cpu;
+    delete processes;
     delete ui;
 }
 
@@ -63,14 +63,14 @@ void MainWindow::UI_ConfigProcesses() {
     ui->tableWidget->setColumnCount(NUMB_COL_PROCESS);
     //ui->tableWidget->columnSpan(    )
 
-    ui->tableWidget->setColumnWidth(PID, 100);
+    ui->tableWidget->setColumnWidth(PROCESS_PID, 100);
     ui->tableWidget->setColumnWidth(PROCESS_NAME, 230);
-    ui->tableWidget->setColumnWidth(USER, 100);
-    ui->tableWidget->setColumnWidth(NICE, 100);
-    ui->tableWidget->setColumnWidth(MEMORY, 100);
+    ui->tableWidget->setColumnWidth(PROCESS_USER, 100);
+    ui->tableWidget->setColumnWidth(PROCESS_NICE, 100);
+    ui->tableWidget->setColumnWidth(PROCESS_MEMORY, 100);
 
-    //ui->tableWidget->setSortingEnabled(true);
-    //ui->tableWidget->sortByColumn(PID,Qt::AscendingOrder);
+    ui->tableWidget->setSortingEnabled(true);
+    //ui->tableWidget->sortByColumn(PROCESS_MEMORY,Qt::AscendingOrder);
     //ui->tableWidget->sortByColumn(PROCESS_NAME,Qt::AscendingOrder);
 
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -125,10 +125,12 @@ void MainWindow::UI_ConfigGraphCPU() {
 
     for(int i=0; i<=numCores; i++) {
         ui->graphCPU->addGraph();
-        if(i == 0)
+        if(i == 0) {
             ui->graphCPU->graph(i)->setName("CPU");
-        else
+        } else {
+            //ui->graphCPU->graph(i)->removeFromLegend();
             ui->graphCPU->graph(i)->setName("CPU" + QString::number(i));
+        }
         ui->graphCPU->graph(i)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
         ui->graphCPU->graph(i)->setAntialiasedFill(false);
     }
@@ -150,45 +152,29 @@ void MainWindow::UI_ConfigGraphCPU() {
 void MainWindow::graphMemory() {
     memInfo->memInfoUpdate();
 
-    ui->lb_m_ram->setText("RAM " + QString::number(memInfo->getMemUsedGiB()) +
-                          "GiB (" + QString::number(memInfo->getMemUsedPerct()) + "%) de " +
-                          QString::number(memInfo->getMemTotalGiB()) + " GiB");
+    ui->lb_m_ram->setText("RAM " + QString::number(memInfo->getMemUsed()) +
+                          " GiB (" + QString::number(memInfo->getMemUsedPerct()) + "%) de " +
+                          QString::number(memInfo->getMemTotal()) + " GiB");
 
-    ui->lb_m_swap->setText("Swap " + QString::number(memInfo->getSwapUsedGiB()) +
-                          "GiB (" + QString::number(memInfo->getSwapUsedPerct()) + "%) de " +
-                          QString::number(memInfo->getSwapTotalGiB()) + " GiB");
+    ui->lb_m_swap->setText("Swap " + QString::number(memInfo->getSwapUsed()) +
+                          " GiB (" + QString::number(memInfo->getSwapUsedPerct()) + "%) de " +
+                          QString::number(memInfo->getSwapTotal()) + " GiB");
 
     ui->graphMemory->graph(0)->addData(timescale,memInfo->getMemUsedPerct());
     ui->graphMemory->graph(1)->addData(timescale,memInfo->getSwapUsedPerct());
 
     ui->graphMemory->xAxis->setRange(timescale, 60, Qt::AlignRight);
     ui->graphMemory->replot();
+
 }
 
 void MainWindow::graphCPU() {
 
-    QString strCPU;
-
     cpu->updateCPU();
 
-    if(teste == 5) {
-        strCPU.clear();
-        for(int i=0; i<=numCores; i++) {
-            if(i == 0)
-            strCPU  =  "  CPU " + QString::number(cpu->getPerctCPU(i)) + "% ";
-            else
-            strCPU  +=  "  CPU" + QString::number(i) + " " + QString::number(cpu->getPerctCPU(i)) + "% ";
-
-            ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
-        }
-
-        ui->labelCPU->setText(strCPU);
-        teste = 0;
+    for(int i=0; i<=numCores; i++) {
+        ui->graphCPU->graph(i)->addData(timescale,cpu->getPerctCPU(i));
     }
-    teste += 1;
-
-    for(int i=0; i<=numCores; i++)
-
 
     ui->graphCPU->xAxis->setRange(timescale, 60, Qt::AlignRight);
     ui->graphCPU->replot();
@@ -216,76 +202,34 @@ void MainWindow::continueProcesses() {
     kill(pidClicked, SIGCONT);
 }
 
-
 void MainWindow::previousWeek(int row, int col) {
     pidClicked = ui->tableWidget->item(row,0)->text().toInt();
 }
 
-void MainWindow::sort(const QString &filter)
-{
-// http://stackoverflow.com/questions/6785481/how-to-set-filter-option-in-qtablewidget// http://stackoverflow.com/questions/20585795/how-to-connect-the-signal-valuechanged-from-qlineedit-to-a-custom-slot-in-qt
-    for( int i = 0; i < ui->tableWidget->rowCount(); ++i )
-    {
-        bool match = false;
-        for( int j = 0; j < 3; ++j )
-        {
-            QTableWidgetItem *item = ui->tableWidget->item( i, j );
-            if( item->text().contains(filter) )
-            {
-                match = true;
-                break;
-            }
-        }
-        ui->tableWidget->setRowHidden( i, !match );
+void MainWindow::processesTable() {
+
+    listProcess = processes->getProcesses();
+
+    static int position=0;
+    std::list<Process>::iterator it = listProcess.begin();
+
+    ui->tableWidget->setRowCount( \
+            ui->tableWidget->rowCount() + ( listProcess.size() - position ) );
+
+    position = 0;
+
+    while( it != listProcess.end() ) {
+
+        ui->tableWidget->setItem(position, PROCESS_NAME, \
+                new QTableWidgetItem( (*it).name ));
+        ui->tableWidget->setItem(position, PROCESS_PID, \
+                new QTableWidgetItem( QString::number( (*it).pid ) ) );
+        ui->tableWidget->setItem(position, PROCESS_MEMORY, \
+                new QTableWidgetItem( QString::number( (*it).rss/1024/1024 ) + " M" ) );
+        ui->tableWidget->setItem(position, PROCESS_NICE, \
+                new QTableWidgetItem( QString::number( (*it).nice ) ) );
+
+        it++;
+        position++;
     }
-
-}
-
-void MainWindow::processes() {
-
-    int i = 0;
-    int *vec;
-    int qPID;
-
-
-    qPID = processo->Q_PIDS();
-    vec = processo->leitura_PID();
-
-
-    if(qPID<qpidantigo)
-    for(int linha = 0; linha<(qpidantigo-qPID); linha++) {
-        ui->tableWidget->removeRow(qpidantigo-linha);
-    }
-    else if(qpidantigo<qPID)
-    for(int linha = 0; linha<(qPID-qpidantigo); linha++) {
-        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-    }
-    qpidantigo = qPID;
-
-
-    for(int ppid = 0; ppid<qPID; ppid++) {
-
-        std::string s;
-        std::stringstream out;
-        out << vec[ppid];
-        s = out.str();
-        processo->leitura_nome_processo(s);
-        //processo->leitura_memoria_processo(s);
-        //processo->leitura_prioridade(s);
-        //processo->Get_nomeProcesso();
-        QString nameP = processo->Get_nomeProcesso().c_str();
-        //QString memR = QString::number(processo->Get_memoriaRam());
-        //QString prio = QString::number(processo->Get_prioridade());
-
-        ui->tableWidget->setItem(ppid,PID,new QTableWidgetItem(QString::number(vec[ppid])));
-
-        ui->tableWidget->setItem(ppid,PROCESS_NAME,
-                                 new QTableWidgetItem(nameP));
-        ui->tableWidget->setItem(ppid,USER,new QTableWidgetItem(".."));
-        ui->tableWidget->setItem(ppid,NICE,new QTableWidgetItem(".."));
-        ui->tableWidget->setItem(ppid,MEMORY,new QTableWidgetItem(".."));
-
-    }
-
-
 }
